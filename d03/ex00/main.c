@@ -1,0 +1,108 @@
+#include "main.h"
+
+#define UART_BAUDRATE 115200
+#define MYUBRR ((F_CPU/(8UL*UART_BAUDRATE))-1)
+
+// UBRR (USART BAUD RATE USAGE)
+// UBRR = (F_CPU / (8 * BAUD)) - 1
+// UBRR = ((16.000.000 / (8 * 115200))) -1 ~= 16.36 = 16
+
+// Error% = ((Real Speed / Target Speed) - 1) * 100
+// Error% = ((F_CPU / (8 * (UBRR+1) * BAUD_RATE) - 1) * 100
+// Error% = ((16000000 / (8 * (16+1) * 115200) -1) * 100 ~= 2.12%
+
+void uart_init(unsigned int ubrr) {
+
+	//set baud rate
+	UBRR0H = (unsigned char)(ubrr >> 8);
+	UBRR0L = (unsigned char)(ubrr);
+		// UBRRO : 12 bits register
+			// >> 8 to keep high bit and store on UBBROHigh
+			// keep low bit on UBBROLow
+
+
+
+	// DATASHEET PAGE 200
+	//mode double speed
+	UCSR0A = (1 << U2X0);
+	/*
+	DATASHEET PAGE 201
+		Bit 1 – U2Xn: Double the USART Transmission Speed
+		This bit only has effect for the asynchronous operation. Write this bit to zero when using synchronous operation.
+		Writing this bit to one will reduce the divisor of the baud rate divider from 16 to 8 effectively doubling the transfer
+		rate for asynchronous communication.
+	*/
+
+
+	//enable receiver transmitter
+	UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+		// RXENO : Receiver enable : Listen on pin RX
+		// TXENO : Transmitter enable : Speak on pin RX
+
+	/*
+	DATASHEET PAGE 202
+		• Bit 4 – RXENn: Receiver Enable n
+		Writing this bit to one enables the USART Receiver. The Receiver will override normal port operation for the
+		RxDn pin when enabled. Disabling the Receiver will flush the receive buffer invalidating the FEn, DORn, and
+		UPEn Flags.
+
+		• Bit 3 – TXENn: Transmitter Enable n
+		Writing this bit to one enables the USART Transmitter. The Transmitter will override normal port operation for
+		the TxDn pin when enabled. The disabling of the Transmitter (writing TXENn to zero) will not become effective
+		until ongoing and pending transmissions are completed, i.e., when the Transmit Shift Register and Transmit
+		Buffer Register do not contain data to be transmitted. When disabled, the Transmitter will no longer override the
+		TxDn port.
+	*/
+
+
+	// 115200 8N1
+	// set frame format 8data, 1 stop bit
+	// UCSR0C = (1 << USBS0) | (3 << UCSZ00);
+	// UCSR0C = (3 << UCSZ00);
+	UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
+		// USBS0  : Stop bit select : set 2 bit for stop
+		// UCSZ00 : 3 == 11 (base2)
+			// UCSZ01 and UCSZ00 set to 1
+			// set char size to 8
+	
+	/*
+	DATASHEET PAGE 203
+		• Bit 2:1 – UCSZn1:0: Character Size
+		The UCSZn1:0 bits combined with the UCSZn2 bit in UCSRnB sets the number of data bits (Character SiZe) in
+		a frame the Receiver and Transmitter use
+	*/
+
+}
+
+void uart_tx(unsigned char data) {
+
+	// Wait for empty transmit buffer
+	while (!UCSR0A & (1 << UDRE0))
+	{
+	}
+
+	/*
+	DATASHEET PAGE 200
+		• Bit 5 – UDREn: USART Data Register Empty
+		The UDREn Flag indicates if the transmit buffer (UDRn) is ready to receive new data. If UDREn is one, the
+		buffer is empty, and therefore ready to be written. The UDREn Flag can generate a Data Register Empty
+		interrupt (see description of the UDRIEn bit). UDREn is set after a reset to indicate that the Transmitter is ready.
+	*/
+
+	//Put data into buffer, send this data
+	UDR0 = data;
+	//DATASHEET PAGE 200 SECTION 20.11
+}
+
+int main() {
+
+	uart_init(MYUBRR);
+
+	while (1) 
+	{
+		_delay_ms(1000);
+		uart_tx('Z');
+	}
+}
+
+// UCRSnA (Control and Status Register)
