@@ -57,9 +57,10 @@ void ft_rgb_led(uint8_t index) {
 
 void setup_timer() {
 
-	OCR1A = (F_CPU / 1024UL) - 1; //2SEC POUR QUE TCNT1 REACH OCR1A
+	OCR1A = (F_CPU / 1024UL) - 1; //1SEC POUR QUE TCNT1 REACH OCR1A
 	TCNT1 = 0;
 
+	// PAGE 142 SECTION 16.11.2
 	TCCR1B |= (1 << WGM12); //MODE 4 CTC
 
 	TCCR1B |= (1 << CS12) | (1 << CS10); //PRESCALER 1024
