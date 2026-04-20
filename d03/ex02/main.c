@@ -26,13 +26,6 @@ void uart_init(unsigned int ubrr) {
 	UCSR0A |= (1 << U2X0);
 	// DATASHEET PAGE 200
 	//mode double speed
-	/*
-	DATASHEET PAGE 201
-		Bit 1 – U2Xn: Double the USART Transmission Speed
-		This bit only has effect for the asynchronous operation. Write this bit to zero when using synchronous operation.
-		Writing this bit to one will reduce the divisor of the baud rate divider from 16 to 8 effectively doubling the transfer
-		rate for asynchronous communication.
-	*/
 
 
 	
@@ -40,20 +33,7 @@ void uart_init(unsigned int ubrr) {
 	//enable receiver transmitter
 		// RXENO : Receiver enable : Listen on pin RX
 		// TXENO : Transmitter enable : Speak on pin RX
-	/*
-	DATASHEET PAGE 202
-		• Bit 4 – RXENn: Receiver Enable n
-		Writing this bit to one enables the USART Receiver. The Receiver will override normal port operation for the
-		RxDn pin when enabled. Disabling the Receiver will flush the receive buffer invalidating the FEn, DORn, and
-		UPEn Flags.
 
-		• Bit 3 – TXENn: Transmitter Enable n
-		Writing this bit to one enables the USART Transmitter. The Transmitter will override normal port operation for
-		the TxDn pin when enabled. The disabling of the Transmitter (writing TXENn to zero) will not become effective
-		until ongoing and pending transmissions are completed, i.e., when the Transmit Shift Register and Transmit
-		Buffer Register do not contain data to be transmitted. When disabled, the Transmitter will no longer override the
-		TxDn port.
-	*/
 
 	// 115200 8N1
 	// set frame format 8data, 1 stop bit
@@ -64,12 +44,7 @@ void uart_init(unsigned int ubrr) {
 		// UCSZ00 : 3 == 11 (base2)
 			// UCSZ01 and UCSZ00 set to 1
 			// set char size to 8
-	/*
-	DATASHEET PAGE 203
-		• Bit 2:1 – UCSZn1:0: Character Size
-		The UCSZn1:0 bits combined with the UCSZn2 bit in UCSRnB sets the number of data bits (Character SiZe) in
-		a frame the Receiver and Transmitter use
-	*/
+
 
 }
 
@@ -79,13 +54,7 @@ void uart_tx(unsigned char data) {
 	while (!(UCSR0A & (1 << UDRE0)))
 	{
 	}
-	/*
-	DATASHEET PAGE 200
-		• Bit 5 – UDREn: USART Data Register Empty
-		The UDREn Flag indicates if the transmit buffer (UDRn) is ready to receive new data. If UDREn is one, the
-		buffer is empty, and therefore ready to be written. The UDREn Flag can generate a Data Register Empty
-		interrupt (see description of the UDRIEn bit). UDREn is set after a reset to indicate that the Transmitter is ready.
-	*/
+
 
 	
 	UDR0 = data;
@@ -96,13 +65,7 @@ void uart_tx(unsigned char data) {
 	// while (!(UCSR0A & (1 << TXC0))) 
 	// {
 	// }
-	/*
-	• Bit 6 – TXCn: USART Transmit Complete
-	This flag bit is set when the entire frame in the Transmit Shift Register has been shifted out and there are no
-	new data currently present in the transmit buffer (UDRn). The TXCn Flag bit is automatically cleared when a
-	transmit complete interrupt is executed, or it can be cleared by writing a one to its bit location. The TXCn Flag
-	can generate a Transmit Complete interrupt (see description of the TXCIEn bit).
-	*/
+
 
 }
 
@@ -121,6 +84,13 @@ char uart_rx(void) {
 	while ( !(UCSR0A & (1 << RXC0)))
 	{
 	}
+/*	 
+	Bit 7 – RXCn: USART Receive Complete
+	This flag bit is set when there are unread data in the receive buffer and cleared when the receive buffer is empty
+	(i.e., does not contain any unread data). If the Receiver is disabled, the receive buffer will be flushed and
+	consequently the RXCn bit will become zero. The RXCn Flag can be used to generate a Receive Complete
+	interrupt (see description of the RXCIEn bit
+*/
 	return UDR0;
 }
 
@@ -141,3 +111,50 @@ int main() {
 }
 
 // UCRSnA (Control and Status Register)
+
+	/*
+	DATASHEET PAGE 201
+		Bit 1 – U2Xn: Double the USART Transmission Speed
+		This bit only has effect for the asynchronous operation. Write this bit to zero when using synchronous operation.
+		Writing this bit to one will reduce the divisor of the baud rate divider from 16 to 8 effectively doubling the transfer
+		rate for asynchronous communication.
+	*/
+
+
+	/*
+	DATASHEET PAGE 202
+		• Bit 4 – RXENn: Receiver Enable n
+		Writing this bit to one enables the USART Receiver. The Receiver will override normal port operation for the
+		RxDn pin when enabled. Disabling the Receiver will flush the receive buffer invalidating the FEn, DORn, and
+		UPEn Flags.
+
+		• Bit 3 – TXENn: Transmitter Enable n
+		Writing this bit to one enables the USART Transmitter. The Transmitter will override normal port operation for
+		the TxDn pin when enabled. The disabling of the Transmitter (writing TXENn to zero) will not become effective
+		until ongoing and pending transmissions are completed, i.e., when the Transmit Shift Register and Transmit
+		Buffer Register do not contain data to be transmitted. When disabled, the Transmitter will no longer override the
+		TxDn port.
+	*/
+
+	/*
+	DATASHEET PAGE 203
+		• Bit 2:1 – UCSZn1:0: Character Size
+		The UCSZn1:0 bits combined with the UCSZn2 bit in UCSRnB sets the number of data bits (Character SiZe) in
+		a frame the Receiver and Transmitter use
+	*/
+
+	/*
+	DATASHEET PAGE 200
+		• Bit 5 – UDREn: USART Data Register Empty
+		The UDREn Flag indicates if the transmit buffer (UDRn) is ready to receive new data. If UDREn is one, the
+		buffer is empty, and therefore ready to be written. The UDREn Flag can generate a Data Register Empty
+		interrupt (see description of the UDRIEn bit). UDREn is set after a reset to indicate that the Transmitter is ready.
+	*/
+
+	/*
+	• Bit 6 – TXCn: USART Transmit Complete
+	This flag bit is set when the entire frame in the Transmit Shift Register has been shifted out and there are no
+	new data currently present in the transmit buffer (UDRn). The TXCn Flag bit is automatically cleared when a
+	transmit complete interrupt is executed, or it can be cleared by writing a one to its bit location. The TXCn Flag
+	can generate a Transmit Complete interrupt (see description of the TXCIEn bit).
+	*/
