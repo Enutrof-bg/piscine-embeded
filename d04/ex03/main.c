@@ -176,10 +176,9 @@ bool ft_check_format(char *value) {
 		if (ft_compare(value[index], hex) == false)
 			return false;
 		index++;
-		
-		if (index > 7)
-			return false;
 	}
+	if (index != 7)
+		return false;
 	return true;
 }
 
