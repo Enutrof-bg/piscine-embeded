@@ -22,13 +22,19 @@ void ft_adc() {
 
 	//DATASHEET PAGE 259 SECTION 24.9.3 //NOTE4
 	ADMUX |= (1 << ADLAR); //ADCH and ADCL:	When an ADC conversion is complete, the result is found in these two registers
+
+	ADCSRA |= (1 << ADSC);
+
+	while ((ADCSRA & (1 << ADSC)))
+	{
+	}
 }
 
 uint8_t ft_adc_read() {
 	//DATASHSSET PAGE 258 SECTION 24.9.2 //NOTE5
-	ADCSRA |= (1 << ADSC);
+	ADCSRA |= (1 << ADSC); // start conversion
 
-	while ((ADCSRA & (1 << ADSC)))
+	while ((ADCSRA & (1 << ADSC))) // ADSC is up while adsc is still ongoing
 	{
 	}
 	return ADCH;
