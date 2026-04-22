@@ -23,6 +23,10 @@ void ft_adc_potensiometer() {
 
 	//DATASHHET PAGE 258 TABLE 24-4
 	// MUX 0000 POUR PC0
+	ADCSRA |= (1 << ADSC);
+	while ((ADCSRA & (1 << ADSC)))
+	{
+	}
 }
 
 void ft_adc_light(void) {
@@ -36,6 +40,11 @@ void ft_adc_light(void) {
 
 	//DATASHHET PAGE 258 TABLE 24-4
 	ADMUX |= (1 << MUX0);// MUX 0001 POUR PC1
+
+	ADCSRA |= (1 << ADSC);
+	while (!(ADCSRA & (1 << ADSC)))
+	{
+	}
 }
 
 void ft_adc_temperature(void) {
@@ -51,16 +60,19 @@ void ft_adc_temperature(void) {
 	//DATASHHET PAGE 258 TABLE 24-4
 	ADMUX |= (1 << MUX1); // MUX 0010 POUR PC2
 
-}
+	ADCSRA |= (1 << ADSC);
+	while ((ADCSRA & (1 << ADSC)))
+	{
+	}
 
+}
 
 uint8_t ft_adc_read() {
 	//DATASHSSET PAGE 258 SECTION 24.9.2 //NOTE5
-	ADCSRA |= (1 << ADSC);
+	ADCSRA |= (1 << ADSC); // start conversion
 
-	while ((ADCSRA & (1 << ADSC)))
+	while ((ADCSRA & (1 << ADSC))) // ADSC is up while adsc is still ongoing
 	{
-		;
 	}
 	return ADCH;
 }
