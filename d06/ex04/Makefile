@@ -1,7 +1,7 @@
 F_CPU    = 16000000UL
 DEVICE   = atmega328p
 BAUDRATE = 115200
-PORT     = /dev/ttyUSB1
+PORT     = /dev/ttyUSB0
 NAME     = main
 
 BIN      = ${NAME}.bin
@@ -11,7 +11,7 @@ CC       = avr-gcc
 OBJCOPY  = avr-objcopy
 CFLAGS   = -Os -mmcu=${DEVICE} -DF_CPU=${F_CPU}
 
-SRCS = main.c uart.c timer.c adc.c
+SRCS = main.c uart.c timer.c rgb.c adc.c
 
 OBJS = $(SRCS:.c=.o)
 

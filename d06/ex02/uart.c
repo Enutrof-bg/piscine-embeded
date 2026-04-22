@@ -1,15 +1,4 @@
-#ifndef UART_H
-# define UART_H
-
 #include "main.h"
-
-#define UART_BAUDRATE 115200
-#define MYUBRR ((F_CPU/(8UL*UART_BAUDRATE))-1)
-
-void uart_init(unsigned int ubrr);
-void uart_printstr(const char *str);
-void uart_tx(unsigned char data);
-char uart_rx(void);
 
 void uart_init(unsigned int ubrr) {
 
@@ -84,4 +73,25 @@ char uart_rx(void) {
 	return UDR0;
 }
 
-#endif
+uint8_t ft_hex(uint8_t val) {
+	char hex[] = "0123456789ABCDEF";
+	
+	return hex[val];
+}
+
+void ft_uart_print_adc(uint8_t c) {
+	uart_tx(ft_hex(c / 16));
+	uart_tx(ft_hex(c % 16));
+}
+
+void ft_uart_print_adc_10bit(uint16_t c) {
+	if (c == 0)
+	{
+		uart_tx('0');
+		return ;
+	}
+	if (c >= 10) {
+		ft_uart_print_adc_10bit(c / 10);
+	}
+	uart_tx('0' + (c % 10));
+}

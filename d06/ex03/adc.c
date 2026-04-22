@@ -1,15 +1,5 @@
 #include "main.h"
 
-uint8_t ft_adc_read();
-void ft_uart_print_adc(uint8_t c);
-
-__attribute__((signal))
-void TIMER1_COMPA_vect() {
-	uint8_t c = ft_adc_read();
-	ft_uart_print_adc(c);
-}
-
-
 void ft_adc() {
 	// DATASHEET PAGE 258 SECTION 24.9.2 //NOTE1
 	ADCSRA |= (1 << ADEN); // ENABLE ADC
@@ -17,11 +7,23 @@ void ft_adc() {
 	//DATASHHET PAGE 259 TABLE 24-5 //NOTE2
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //DIVISION FACTOR 128
 
-	//DATASHEET PAGE 257 SECTION 24.9.1 //NOTE3
-	ADMUX |= (1 << REFS0); //AVCC with external capacitor at AREF pin
+	ADMUX = 0;
 
+	// ADMUX |= (1 << MUX2) | (1 << MUX1) | (1 << MUX0);
+	ADMUX |= (1 << MUX3);
+
+	//DATASHEET PAGE 257 SECTION 24.9.1  table 24-3//NOTE3
+	// ADMUX |= (1 << REFS0); // AVCC with external capacitor at AREF pin
+	ADMUX |= (1 << REFS1) | (1 << REFS0); //internal 1.1V Voltage Reference with external capacitor at AREF pin
+	// ADMUX |= (1 << REFS1); 
+	
 	//DATASHEET PAGE 259 SECTION 24.9.3 //NOTE4
-	ADMUX |= (1 << ADLAR); //ADCH and ADCL:	When an ADC conversion is complete, the result is found in these two registers
+	// ADMUX |= (1 << ADLAR); //ADCH and ADCL:	When an ADC conversion is complete, the result is found in these two registers
+	ADCSRA |= (1 << ADSC);
+
+	while (!(ADCSRA & (1 << ADSC)))
+	{
+	}
 }
 
 uint8_t ft_adc_read() {
@@ -34,32 +36,14 @@ uint8_t ft_adc_read() {
 	return ADCH;
 }
 
-uint8_t ft_hex(uint8_t val) {
-	char hex[] = "0123456789ABCDEF";
-	
-	return hex[val];
-}
+uint16_t ft_adc_read_10bit() {
+	//DATASHSSET PAGE 258 SECTION 24.9.2 //NOTE5
+	ADCSRA |= (1 << ADSC);
 
-void ft_uart_print_adc(uint8_t c) {
-	uart_tx(ft_hex(c / 16));
-	uart_tx(ft_hex(c % 16));
-	uart_printstr("\r\n");
-}
-
-void ft_init() {
-	uart_init(MYUBRR);
-	setup_timer();
-	ft_adc();
-}
-
-int main() {
-	
-	ft_init();
-	
-	while(1)
+	while ((ADCSRA & (1 << ADSC)))
 	{
 	}
-
+	return ADC;
 }
 
 //NOTE1

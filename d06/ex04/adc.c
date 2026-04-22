@@ -1,15 +1,5 @@
 #include "main.h"
 
-uint8_t ft_adc_read();
-void ft_uart_print_adc(uint8_t c);
-
-__attribute__((signal))
-void TIMER1_COMPA_vect() {
-	uint8_t c = ft_adc_read();
-	ft_uart_print_adc(c);
-}
-
-
 void ft_adc() {
 	// DATASHEET PAGE 258 SECTION 24.9.2 //NOTE1
 	ADCSRA |= (1 << ADEN); // ENABLE ADC
@@ -28,38 +18,10 @@ uint8_t ft_adc_read() {
 	//DATASHSSET PAGE 258 SECTION 24.9.2 //NOTE5
 	ADCSRA |= (1 << ADSC);
 
-	while ((ADCSRA & (1 << ADSC)))
+	while (ADCSRA & (1 << ADSC))
 	{
 	}
 	return ADCH;
-}
-
-uint8_t ft_hex(uint8_t val) {
-	char hex[] = "0123456789ABCDEF";
-	
-	return hex[val];
-}
-
-void ft_uart_print_adc(uint8_t c) {
-	uart_tx(ft_hex(c / 16));
-	uart_tx(ft_hex(c % 16));
-	uart_printstr("\r\n");
-}
-
-void ft_init() {
-	uart_init(MYUBRR);
-	setup_timer();
-	ft_adc();
-}
-
-int main() {
-	
-	ft_init();
-	
-	while(1)
-	{
-	}
-
 }
 
 //NOTE1

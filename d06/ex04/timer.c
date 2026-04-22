@@ -1,6 +1,3 @@
-#ifndef TIMER_H
-# define TIMER_H
-
 #include "main.h"
 
 void setup_timer() {
@@ -22,6 +19,5 @@ void setup_timer() {
 	Timer/Counter1 Output Compare A Match interrupt is enabled. The corresponding Interrupt Vector (see
 	“Interrupts” on page 66) is executed when the OCF1A Flag, located in TIFR1, is set
 	*/
+	SREG |= (1 << SREG_I); //DATASHEET PAGE 20 SECTION 7.3.1
 }
-
-#endif

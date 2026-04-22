@@ -1,28 +1,58 @@
 #include "main.h"
 
-uint8_t ft_adc_read();
-void ft_uart_print_adc(uint8_t c);
-
-__attribute__((signal))
-void TIMER1_COMPA_vect() {
-	uint8_t c = ft_adc_read();
-	ft_uart_print_adc(c);
-}
-
-
-void ft_adc() {
+void ft_adc_init() {
 	// DATASHEET PAGE 258 SECTION 24.9.2 //NOTE1
 	ADCSRA |= (1 << ADEN); // ENABLE ADC
 
 	//DATASHHET PAGE 259 TABLE 24-5 //NOTE2
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //DIVISION FACTOR 128
 
+	//DATASHEET PAGE 259 // NOTE 6
+	// ADCSRA |= (1 << ADIE); //When this bit is written to one and the I-bit in SREG is set, the ADC Conversion Complete Interrupt is activated
+}
+
+
+void ft_adc_potensiometer() {
+	ADMUX = 0;
+
 	//DATASHEET PAGE 257 SECTION 24.9.1 //NOTE3
 	ADMUX |= (1 << REFS0); //AVCC with external capacitor at AREF pin
 
 	//DATASHEET PAGE 259 SECTION 24.9.3 //NOTE4
-	ADMUX |= (1 << ADLAR); //ADCH and ADCL:	When an ADC conversion is complete, the result is found in these two registers
+	// ADMUX |= (1 << ADLAR); //ADCH and ADCL:	When an ADC conversion is complete, the result is found in these two registers
+
+	//DATASHHET PAGE 258 TABLE 24-4
+	// MUX 0000 POUR PC0
 }
+
+void ft_adc_light(void) {
+	ADMUX = 0;
+
+	//DATASHEET PAGE 257 SECTION 24.9.1 //NOTE3
+	ADMUX |= (1 << REFS0); //AVCC with external capacitor at AREF pin
+
+	//DATASHEET PAGE 259 SECTION 24.9.3 //NOTE4
+	// ADMUX |= (1 << ADLAR); //ADCH and ADCL:	When an ADC conversion is complete, the result is found in these two registers
+
+	//DATASHHET PAGE 258 TABLE 24-4
+	ADMUX |= (1 << MUX0);// MUX 0001 POUR PC1
+}
+
+void ft_adc_temperature(void) {
+	ADMUX = 0;
+
+	//DATASHEET PAGE 257 SECTION 24.9.1 //NOTE3
+	// ADMUX |= (1 << REFS1) | (1 << REFS0);
+	ADMUX |= (1 << REFS0);
+
+	//DATASHEET PAGE 259 SECTION 24.9.3 //NOTE4
+	// ADMUX |= (1 << ADLAR); //ADCH and ADCL:	When an ADC conversion is complete, the result is found in these two registers
+
+	//DATASHHET PAGE 258 TABLE 24-4
+	ADMUX |= (1 << MUX1); // MUX 0010 POUR PC2
+
+}
+
 
 uint8_t ft_adc_read() {
 	//DATASHSSET PAGE 258 SECTION 24.9.2 //NOTE5
@@ -30,37 +60,29 @@ uint8_t ft_adc_read() {
 
 	while ((ADCSRA & (1 << ADSC)))
 	{
+		;
 	}
 	return ADCH;
 }
 
-uint8_t ft_hex(uint8_t val) {
-	char hex[] = "0123456789ABCDEF";
-	
-	return hex[val];
-}
+uint16_t ft_adc_read_10bit() {
+	//DATASHSSET PAGE 258 SECTION 24.9.2 //NOTE5
+	ADCSRA |= (1 << ADSC);
 
-void ft_uart_print_adc(uint8_t c) {
-	uart_tx(ft_hex(c / 16));
-	uart_tx(ft_hex(c % 16));
-	uart_printstr("\r\n");
-}
-
-void ft_init() {
-	uart_init(MYUBRR);
-	setup_timer();
-	ft_adc();
-}
-
-int main() {
-	
-	ft_init();
-	
-	while(1)
+	while ((ADCSRA & (1 << ADSC)))
 	{
 	}
-
+	return ADC;
 }
+
+// ADMUX |= (1 << MUX0);	
+// ADMUX |= (1 << MUX1);
+// ADMUX |= (1 << MUX1)  | (1 << MUX0); //TIMER INVERSE LENT ??
+// ADMUX |= (1 << MUX2); // FF
+// ADMUX |= (1 << MUX2) | (1 << MUX0); // FF
+// ADMUX |= (1 << MUX2) | (1 << MUX1);
+// ADMUX |= (1 << MUX2) | (1 << MUX1)  | (1 << MUX0);
+// ADMUX |= (1 << MUX3); //temperature
 
 //NOTE1
 /*
@@ -105,4 +127,14 @@ int main() {
 	the normal 13. This first conversion performs initialization of the ADC.
 	ADSC will read as one as long as a conversion is in progress. When the conversion is complete, it returns to
 	zero. Writing zero to this bit has no effect.
+*/
+
+//NOTE6
+/*
+ Bit 4 – ADIF: ADC Interrupt Flag
+This bit is set when an ADC conversion completes and the Data Registers are updated. The ADC Conversion
+Complete Interrupt is executed if the ADIE bit and the I-bit in SREG are set. ADIF is cleared by hardware when
+executing the corresponding interrupt handling vector. Alternatively, ADIF is cleared by writing a logical one to
+the flag. Beware that if doing a Read-Modify-Write on ADCSRA, a pending interrupt can be disabled. This also
+applies if the SBI and CBI instructions are used.
 */
