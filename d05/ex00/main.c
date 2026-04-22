@@ -1,22 +1,42 @@
 #include "main.h"
 
+volatile uint8_t button_state = 0; // 0 = attend appui, 1 = attend relâchement
 
 __attribute__((signal))
 void TIMER1_COMPA_vect() {
+
+	//datashhet page 81 section 13.2.3
+	// Alternatively, the flag can be cleared by writing a logical one to it.
 	EIFR |= (1 << INTF0); // inetrrupt flag is set on interrupt, EIFR clears it // NOTE2.3
-	EIMSK |= (1 << INT0); // re enalbe the mask
+
+
+	EIMSK |= (1 << INT0); // re enable the mask
 }
 
 
-//DATASHEET PAGE 74
 __attribute__((signal))
 void INT0_vect() {
-	EIMSK &= ~(1 << INT0); // retire le mask, l'interupt n'est plus appele pour le debouncing
+    EIMSK &= ~(1 << INT0); // retire le mask, l'interupt n'est plus appele pour le debouncing
 
-	PORTB ^= (1 << PB0);
+    if (button_state == 0) // pressed
+	{
+        PORTB ^= (1 << PB0); 
+        button_state = 1;
+        
+		//datasheet page 80 table 13-2
+		//set the falling edge
+        EICRA |= (1 << ISC00); 
+    }
+	else //released
+	{
+        button_state = 0;
+        
+		//datasheet page 80 table 13-2
+		// set the rising edge 
+        EICRA &= ~(1 << ISC00);
+    }
 
-	TCNT1 = 0;
-	
+    TCNT1 = 0; // On lance le chrono de silence
 }
 
 void ft_init(void) {
@@ -24,9 +44,11 @@ void ft_init(void) {
 
 	DDRB |= (1 << PB0);
 
+	PORTD |= (1 << PD2);
+
 	//DATASHEET PAGE 80 SECTION 13.2.1 //*note2.2
-	EICRA |= (1 << ISC01) | (1 << ISC00); //external Interrupt Control, control on what behavior the interrupt is called
-	// EICRA |= (1 << ISC01); 
+	// EICRA |= (1 << ISC01) | (1 << ISC00); //external Interrupt Control, control on what behavior the interrupt is called
+	EICRA |= (1 << ISC01); 
 
 
 	//DATASHEET PAGE 81 SECTION 13.2.2 //*note2.1
@@ -37,7 +59,7 @@ void ft_init(void) {
 
 void ft_set_timer1() {
 
-	OCR1A = (F_CPU / 1024UL / 20UL) - 1; //1SEC POUR QUE TCNT1 REACH OCR1A
+	OCR1A = (F_CPU / 1024UL / 20UL) - 1; // 1/20sec POUR QUE TCNT1 REACH OCR1A
 	TCNT1 = 0;
 
 	// PAGE 142 SECTION 16.11.2
@@ -97,42 +119,6 @@ int main() {
 	logical one to it. This flag is always cleared when INT0 is configured as a level interrupt
  */
 
-
-
-
-
-// note.1
-// PCMSK2
-// DATASHEET PAGE 83 SECTION 13.2.6 
-/*
-	• Bit 7:0 – PCINT[23:16]: Pin Change Enable Mask 23...16
-	Each PCINT[23:16]-bit selects whether pin change interrupt is enabled on the corresponding I/O pin. If
-	PCINT[23:16] is set and the PCIE2 bit in PCICR is set, pin change interrupt is enabled on the corresponding I/O
-	pin. If PCINT[23:16] is cleared, pin change interrupt on the corresponding I/O pin is disabled.
-*/
-
-
-// note.2 
-// PCICR
-// DATASHEET PAGE 82  SECTION 13.2.4
-/*
-	• Bit 2 – PCIE2: Pin Change Interrupt Enable 2
-	When the PCIE2 bit is set (one) and the I-bit in the Status Register (SREG) is set (one), pin change interrupt 2 is
-	enabled. Any change on any enabled PCINT[23:16] pin will cause an interrupt. The corresponding interrupt of
-	Pin Change Interrupt Request is executed from the PCI2 Interrupt Vector. PCINT[23:16] pins are enabled
-	individually by the PCMSK2 Register.
-*/
-
-
-// note.3
-// TIMSK0
-// DATASHEET PAGE 118 SECTION 15.9.6
-/*
-	• Bit 1 – OCIE0A: Timer/Counter0 Output Compare Match A Interrupt Enable
-	When the OCIE0A bit is written to one, and the I-bit in the Status Register is set, the Timer/Counter0 Compare
-	Match A interrupt is enabled. The corresponding interrupt is executed if a Compare Match in Timer/Counter0
-	occurs, i.e., when the OCF0A bit is set in the Timer/Counter 0 Interrupt Flag Register – TIFR0
-*/
 
 //note.4
 // TIFR0
