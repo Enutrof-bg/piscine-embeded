@@ -1,6 +1,3 @@
-#ifndef TIMER_H
-# define TIMER_H
-
 #include "main.h"
 
 void setup_timer() {
@@ -24,5 +21,3 @@ void setup_timer() {
 	*/
 	SREG |= (1 << SREG_I); //DATASHEET PAGE 20 SECTION 7.3.1
 }
-
-#endif

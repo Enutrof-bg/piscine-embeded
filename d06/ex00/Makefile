@@ -11,15 +11,22 @@ CC       = avr-gcc
 OBJCOPY  = avr-objcopy
 CFLAGS   = -Os -mmcu=${DEVICE} -DF_CPU=${F_CPU}
 
+SRCS = main.c uart.c timer.c
+
+OBJS = $(SRCS:.c=.o)
+
+%.o: %.c
+	${CC} ${CFLAGS} -c $< -o $@
+
 all: flash
 
 hex: ${HEX}
 
-${BIN}: main.c
-	${CC} ${CFLAGS} main.c -o ${BIN}
+${BIN}: ${OBJS}
+	${CC} ${CFLAGS} ${OBJS} -o ${BIN}
 
 ${HEX}: ${BIN}
-	${OBJCOPY} -O ihex -R .eeprom ${BIN} ${HEX}
+	${OBJCOPY} -O ihex ${BIN} ${HEX}
 
 flash: hex
 	avrdude -p ${DEVICE} -c arduino -P ${PORT} -b ${BAUDRATE} -v -U flash:w:${HEX}:i
@@ -28,7 +35,7 @@ screen: flash
 	screen ${PORT} ${BAUDRATE}
 	
 clean:
-	rm -f ${BIN} ${HEX}
+	rm -f ${BIN} ${HEX} ${OBJS}
 
 fclean: clean
 

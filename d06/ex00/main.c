@@ -1,6 +1,4 @@
 #include "main.h"
-#include "uart.h"
-#include "timer.h"
 
 uint8_t ft_adc_read();
 void ft_uart_print_adc(uint8_t c);
