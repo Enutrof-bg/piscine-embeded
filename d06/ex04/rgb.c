@@ -3,13 +3,13 @@
 
 void ft_led(uint8_t c) {
 	PORTB = 0;
-	if (c > 0)
-		PORTB |= (1 << PB0);
 	if (c > 64)
-		PORTB |= (1 << PB1);
+		PORTB |= (1 << PB0);
 	if (c > 128)
-		PORTB |= (1 << PB2);
+		PORTB |= (1 << PB1);
 	if (c > 192)
+		PORTB |= (1 << PB2);
+	if (c >= 255)
 		PORTB |= (1 << PB4);
 }
 

@@ -25,7 +25,7 @@ Temperature sensor offset
 	TOS = adc - (Temperature reel / k)
 		~= 358 - (25 / K)
 
-	- j'ai pas de thermometre alors on va dire que la temperature exterieur est de 25degree celsius
+	- we will work with a temperature of 25degree celsius in the room
 	- the internal temperature sensor gives 358adc on average:
 */
 
