@@ -9,13 +9,10 @@ void ft_adc() {
 
 	ADMUX = 0;
 
-	// ADMUX |= (1 << MUX2) | (1 << MUX1) | (1 << MUX0);
 	ADMUX |= (1 << MUX3);
 
 	//DATASHEET PAGE 257 SECTION 24.9.1  table 24-3//NOTE3
-	// ADMUX |= (1 << REFS0); // AVCC with external capacitor at AREF pin
 	ADMUX |= (1 << REFS1) | (1 << REFS0); //internal 1.1V Voltage Reference with external capacitor at AREF pin
-	// ADMUX |= (1 << REFS1); 
 	
 	//DATASHEET PAGE 259 SECTION 24.9.3 //NOTE4
 	// ADMUX |= (1 << ADLAR); //ADCH and ADCL:	When an ADC conversion is complete, the result is found in these two registers
