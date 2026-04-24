@@ -7,14 +7,17 @@ void TIMER1_COMPA_vect() {
 	i2c_start();
 	// TWCR = (1 << TWINT);
 
-	i2c_write('a');
+	// i2c_write('a');
+	// i2c_stop();
+
+	ft_protocole();
 	i2c_stop();
 }
 
 
 void setup_timer() {
 
-	OCR1A = (F_CPU / 1024UL / 10UL) - 1; //0.02SEC POUR QUE TCNT1 REACH OCR1A
+	OCR1A = (F_CPU / 1024UL / 1UL) - 1; //0.1SEC POUR QUE TCNT1 REACH OCR1A
 	TCNT1 = 0;
 
 	// PAGE 142 SECTION 16.11.2

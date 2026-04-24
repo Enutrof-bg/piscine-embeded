@@ -3,9 +3,18 @@
 
 #include <avr/io.h>
 #include <util/twi.h>
+#include <util/delay.h>
 
 #define UART_BAUDRATE 115200
 #define MYUBRR ((F_CPU/(8UL*UART_BAUDRATE))-1)
+
+#define T_SENSOR_ADDR 0x38
+
+#define STATE_START 0x08
+#define MT_SLA_ACK 0x18 //SLA+W has been transmitted; ACK has been received
+#define MT_DATA_ACK 0x28 //  Data byte has been transmitted; ACK has been received
+
+
 
 //i2c.c
 void		i2c_init(void);
@@ -14,6 +23,8 @@ void 		i2c_stop(void) ;
 void 		i2c_write(unsigned char data);
 void 		i2c_read(void);
 void 		print_hex_value(char c);
+
+void ft_protocole(void);
 
 //timer.c
 void 		setup_timer();
