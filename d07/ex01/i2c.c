@@ -116,136 +116,41 @@ void i2c_read(void) {
 void ft_protocole(void) {
 	
 	i2c_start();
-	// if (g_state != STATE_START)
-	// {
-	// 	uart_printstr("START_STATUS_NOT_DETECTED\r\n");
-	// 	return ;
-	// }
-	// TWDR = (T_SENSOR_ADDR << 1) | 0;
-	// TWCR = (1 << TWINT) | (1 << TWEN);
-
-	// while ( !(TWCR & (1 << TWINT)) )
-	// {
-	// }
 	i2c_write((T_SENSOR_ADDR << 1) | 0);
-	// uart_printstr("STEP ADDR :");
-	// ft_update_and_print_status();
 
 	if (g_state != MT_SLA_ACK) //sla has been transmitted and ack received
 	{
 		uart_printstr("MT_SLA_ACK_STATUS_NOT_DETECTED\r\n");
 		return ;
 	}
-	_delay_ms(40);
 	
-	// TWDR = 0x71;
-	// TWCR = (1 << TWINT) | (1 << TWEN);
-	// while ( !(TWCR & (1 << TWINT)) )
-	// {
-	// }
+	_delay_ms(40);
 	i2c_write(0x71);
-	// uart_printstr("STEP 0x71 :");
-	// ft_update_and_print_status();
-
 
 	if ((g_state & (1 << 3))) 
 	{
-		// uart_printstr("NEED TO SEND 0xbe :\r\n");
-
-
-
-		// TWDR = 0xBE;
-		// TWCR = (1 << TWINT) | (1 << TWEN);
-		// while ( !(TWCR & (1 << TWINT)) )
-		// {
-		// }
 		i2c_write(0xBE);
-		// uart_printstr("STEP 0xBE :");
-		// ft_update_and_print_status();
-
-
-
-
-		// TWDR = 0x08;
-		// TWCR = (1 << TWINT) | (1 << TWEN);
-		// while ( !(TWCR & (1 << TWINT)) )
-		// {
-		// }
 		i2c_write(0x08);
-		// uart_printstr("STEP 0x08 :");
-		// ft_update_and_print_status();
-
-
 		_delay_ms(160);
-
-		// TWDR = 0x00;
-		// TWCR = (1 << TWINT) | (1 << TWEN);
-		// while ( !(TWCR & (1 << TWINT)) )
-		// {
-		// }
 		i2c_write(0x00);
-		// uart_printstr("STEP 0x00 :");
-		// ft_update_and_print_status();
-
 		i2c_stop();
 
-
 		_delay_ms(10);
-		// uart_printstr("WAIT 10ms\r\n");
 	}
 
 	i2c_start();
 	i2c_write((T_SENSOR_ADDR << 1) | 0);
-
-	// TWDR = 0xAC;
-	// TWCR = (1 << TWINT) | (1 << TWEN);
-	// while ( !(TWCR & (1 << TWINT)) )
-	// {
-	// }
 	i2c_write(0xAC);
-	// uart_printstr("STEP 0xAC :");
-	// ft_update_and_print_status();
-
-
-
-	// TWDR = 0x33;
-	// TWCR = (1 << TWINT) | (1 << TWEN);
-	// while ( !(TWCR & (1 << TWINT)) )
-	// {
-	// }
 	i2c_write(0x33);
-	// uart_printstr("STEP 0x33 :");
-	// ft_update_and_print_status();
-
-
-
-
-	// TWDR = 0x00;
-	// TWCR = (1 << TWINT) | (1 << TWEN);
-	// while ( !(TWCR & (1 << TWINT)) )
-	// {
-	// }
 	i2c_write(0x00);
-	// uart_printstr("STEP 0x00 :");
-	// ft_update_and_print_status();
-
-
-
 
 	_delay_ms(80);
-	// uart_printstr("WAIT 80ms\r\n");
 
-
-	g_state = TWSR & 0xF8;
-	// uart_printstr("Print g_state :");
-	// ft_uart_print_adc_10bit(g_state);
-	// uart_printstr("\r\n");
+	i2c_status();
 
 	if (!(g_state & (1 << 7)))
 	{
-		// uart_printstr("Ready to read bytes\r\n");
 		i2c_read();
-
 	}
 	i2c_stop();
 }
