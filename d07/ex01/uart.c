@@ -80,10 +80,9 @@ uint8_t ft_hex(uint8_t val) {
 	return hex[val];
 }
 
-void ft_uart_print_adc(uint8_t c) {
+void ft_uart_print_hex(uint8_t c) {
 	uart_tx(ft_hex(c / 16));
 	uart_tx(ft_hex(c % 16));
-	uart_printstr("\r\n");
 }
 
 void ft_uart_print_adc_10bit(uint16_t c) {
