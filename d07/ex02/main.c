@@ -8,7 +8,7 @@
 void ft_init(void) {
 	uart_init(MYUBRR);
 	i2c_init();
-	setup_timer();
+	// setup_timer();
 }
 
 int main() {
@@ -17,5 +17,7 @@ int main() {
 
 	while (1)
 	{
+		ft_protocole();
+		_delay_ms(2000);
 	}	
 }

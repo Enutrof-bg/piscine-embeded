@@ -67,7 +67,6 @@ void i2c_write(unsigned char data) {
 	}
 
 	i2c_status();
-	// ft_update_and_print_status();
 }
 
 uint8_t i2c_read_ack(void) {

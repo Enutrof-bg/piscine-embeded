@@ -37,6 +37,6 @@ void 		uart_tx(unsigned char data);
 char 		uart_rx(void);
 uint8_t 	ft_hex(uint8_t val);
 void		ft_uart_print_hex(uint8_t c);
-void 		ft_uart_print_adc_10bit(uint16_t c);
+void 		ft_uart_print_adc_10bit(uint32_t c);
 
 #endif
