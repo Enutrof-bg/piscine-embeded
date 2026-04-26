@@ -3,9 +3,7 @@
 
 __attribute__((signal))
 void TIMER1_COMPA_vect() {
-	ft_protocole
-	();
-	
+
 }
 
 /*
