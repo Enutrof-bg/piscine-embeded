@@ -3,8 +3,6 @@
 
 #include <avr/io.h>
 #include <util/twi.h>
-#include <util/delay.h>
-#include <stdlib.h> //dtostrf
 
 #define UART_BAUDRATE 115200
 #define MYUBRR ((F_CPU/(8UL*UART_BAUDRATE))-1)
