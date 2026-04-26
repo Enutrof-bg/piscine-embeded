@@ -85,7 +85,7 @@ void ft_uart_print_hex(uint8_t c) {
 	uart_tx(ft_hex(c % 16));
 }
 
-void ft_uart_print_adc_10bit(uint16_t c) {
+void ft_uart_print_adc_10bit(uint32_t c) {
 	if (c == 0)
 		uart_tx('0');
 	if (c > 10) {

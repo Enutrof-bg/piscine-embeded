@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <util/twi.h>
 #include <util/delay.h>
+#include <stdlib.h> //dtostrf
 
 #define UART_BAUDRATE 115200
 #define MYUBRR ((F_CPU/(8UL*UART_BAUDRATE))-1)
@@ -14,7 +15,7 @@
 #define MT_SLA_ACK 0x18 //SLA+W has been transmitted; ACK has been received
 #define MT_DATA_ACK 0x28 //  Data byte has been transmitted; ACK has been received
 
-
+#define DIVIDER 1048576UL
 
 //i2c.c
 void		i2c_init(void);
@@ -36,6 +37,6 @@ void 		uart_tx(unsigned char data);
 char 		uart_rx(void);
 uint8_t 	ft_hex(uint8_t val);
 void		ft_uart_print_hex(uint8_t c);
-void 		ft_uart_print_adc_10bit(uint16_t c);
+void 		ft_uart_print_adc_10bit(uint32_t c);
 
 #endif

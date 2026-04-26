@@ -28,22 +28,6 @@ void i2c_init(void) {
 	//TWEN must be written to one to enable the TWI
 }
 
-// void ft_print_status(void) {
-
-// 	switch(g_state) {
-// 		case STATE_START:
-// 			break;
-
-// 		default:
-// 			break;
-// 	}
-
-// 	uart_printstr("status code: 0x");
-// 	ft_uart_print_hex(g_state);
-// 	uart_printstr("\r\n");
-
-// }
-
 
 void ft_print_status(void) {
     uart_printstr("Status code: 0x");
@@ -59,11 +43,11 @@ void ft_print_status(void) {
             break;
 
         case 0x18: 
-	        uart_printstr("SLA+W (Addr Write) transmitted, ACK received");
+	        uart_printstr("SLA+W transmitted, ACK received");
             break;
 
         case 0x20:
-            uart_printstr("SLA+W transmitted, NACK received (Capteur absent?)");
+            uart_printstr("SLA+W transmitted, NACK received");
             break;
 
         case 0x28: 
@@ -75,7 +59,7 @@ void ft_print_status(void) {
             break;
       
         case 0x40:
-            uart_printstr("SLA+R (Addr Read) transmitted, ACK received");
+            uart_printstr("SLA+R transmitted, ACK received");
             break;
 
         case 0x48:
@@ -87,11 +71,11 @@ void ft_print_status(void) {
             break;
 
         case 0x58:
-            uart_printstr("Data byte received, NACK returned (End of read)");
+            uart_printstr("Data byte received, NACK returned");
             break;
 
         case 0x38:
-            uart_printstr("Arbitration lost (Bus conflict)");
+            uart_printstr("Arbitration lost");
             break;
 
         case 0x00:
@@ -129,7 +113,6 @@ void i2c_start(void) {
 }
 
 void i2c_stop(void) {
-	// TWCR = (1 << TWINT);
 	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
 }
 
@@ -154,13 +137,21 @@ void i2c_write(unsigned char data) {
 
 uint8_t i2c_read_ack(void) {
     TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWEA);
-    while (!(TWCR & (1 << TWINT)));
+    while (!(TWCR & (1 << TWINT)))
+	{
+	}
+
+	i2c_status();
     return TWDR;
 }
 
 uint8_t i2c_read_nack(void) {
     TWCR = (1 << TWINT) | (1 << TWEN);
-    while (!(TWCR & (1 << TWINT)));
+    while (!(TWCR & (1 << TWINT)))
+	{
+	}
+
+	i2c_status();
     return TWDR;
 }
 

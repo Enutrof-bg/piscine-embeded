@@ -8,7 +8,6 @@
 void ft_init(void) {
 	uart_init(MYUBRR);
 	i2c_init();
-	// setup_timer();
 }
 
 int main() {
