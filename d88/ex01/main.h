@@ -9,8 +9,9 @@
 #define MYUBRR ((F_CPU/(8UL*UART_BAUDRATE))-1)
 
 #define MODE_INPUT 1
-#define BUFFER_SIZE 7
+#define BUFFER_SIZE 6
 
+#define EEPROM_SIZE 1024
 
 //eeprom.c
 void ft_print_eeprom();

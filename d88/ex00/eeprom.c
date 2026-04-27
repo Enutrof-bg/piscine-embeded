@@ -24,15 +24,15 @@ void ft_print_eeprom() {
 	// uint8_t wordByte;
 	uint16_t index = 0;
 
-	uint8_t eepromData[1024];
+	uint8_t eepromData[EEPROM_SIZE];
 
 	// put the address wanted in EEAR and read his contents
-	for (uint16_t index = 0; index < 1024; index++)  {
+	for (uint16_t index = 0; index < EEPROM_SIZE; index++)  {
 		eepromData[index] = EEPROM_read(index);
 	}
 
 
-	for (uint16_t line = 0; line < 1024; line++)
+	for (uint16_t line = 0; line < EEPROM_SIZE; line++)
 	{
 		if ((line % 16 == 0))
 		{

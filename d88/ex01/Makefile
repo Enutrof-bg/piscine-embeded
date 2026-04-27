@@ -1,7 +1,7 @@
 F_CPU    = 16000000UL
 DEVICE   = atmega328p
 BAUDRATE = 115200
-PORT     = /dev/ttyUSB0
+PORT     = /dev/ttyUSB1
 NAME     = main
 
 BIN      = ${NAME}.bin

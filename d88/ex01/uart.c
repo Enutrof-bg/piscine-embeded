@@ -77,6 +77,10 @@ char uart_rx(void) {
 uint8_t ft_hex(uint8_t val) {
 	char hex[] = "0123456789ABCDEF";
 	
+	uart_printstr("test:");
+	uart_tx(hex[val]);
+	uart_printstr("\r\n");
+
 	return hex[val];
 }
 
