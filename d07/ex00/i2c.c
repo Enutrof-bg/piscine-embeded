@@ -104,16 +104,23 @@ void i2c_start(void) {
 	// TWSTA: start condition bit
 	// TWEN: enable bit
 	TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
-	
 	while ( !(TWCR & (1 << TWINT)) )
 	{
 	}
+	i2c_status();
 
+	//SEND DATA WITH ADRRESS 0x38 IN WRITING MODE
+	TWDR = (T_SENSOR_ADDR << 1) | 0;
+	TWCR = (1 << TWINT) | (1 << TWEN);
+	while ( !(TWCR & (1 << TWINT)) )
+	{
+	}
 	i2c_status();
 }
 
 void i2c_stop(void) {
-	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
+	//DATASHEET PAGE 224 STOP CONDITION FIGURE 22-10 SEECTION 7 // NOTE1
+	TWCR |= (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
 }
 
 
@@ -148,4 +155,13 @@ void i2c_stop(void) {
 	takes control over the I/O pins connected to the SCL and SDA pins, enabling the slew-rate limiters and spike
 	filters. If this bit is written to zero, the TWI is switched off and all TWI transmissions are terminated, regardless of
 	any ongoing operation.
+*/
+
+/*
+	Bit 4 – TWSTO: TWI STOP Condition Bit
+	Writing the TWSTO bit to one in Master mode will generate a STOP condition on the 2-wire Serial Bus. When
+	the STOP condition is executed on the bus, the TWSTO bit is cleared automatically. In Slave mode, setting the
+	TWSTO bit can be used to recover from an error condition. This will not generate a STOP condition, but the TWI
+	returns to a well-defined unaddressed Slave mode and releases the SCL and SDA lines to a high impedance
+	state
 */

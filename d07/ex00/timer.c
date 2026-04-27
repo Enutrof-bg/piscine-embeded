@@ -3,22 +3,15 @@
 
 __attribute__((signal))
 void TIMER1_COMPA_vect() {
+	i2c_start();
 
+	i2c_stop();
 }
 
-/*
-Moreover, when the measurement frequency is too
-high, the temperature of the sensor itself will rise,
-which will affect the measurement accuracy. In order
-to make its temperature rise below 0.1,
-the activation time of AHT20 should not exceed 10% of
-the measurement time -
-it is recommended to measure data every 2 seconds
-*/
 
 void setup_timer() {
 
-	OCR1A = (F_CPU / 1024UL * 2UL) - 1; //2SEC POUR QUE TCNT1 REACH OCR1A
+	OCR1A = (F_CPU / 1024UL / 1UL) - 1; //1SEC POUR QUE TCNT1 REACH OCR1A
 	TCNT1 = 0;
 
 	// PAGE 142 SECTION 16.11.2

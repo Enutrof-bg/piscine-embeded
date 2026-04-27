@@ -113,7 +113,7 @@ void i2c_start(void) {
 }
 
 void i2c_stop(void) {
-	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
+	TWCR |= (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
 }
 
 
@@ -208,11 +208,6 @@ void ft_display_data_better() {
 	if (average < 3)
 		average++;
 
-	uart_printstr("Humidity: ");
-	ft_uart_print_adc_10bit(data_humidity_raw);
-	uart_printstr("\r\nTemperature: ");
-	ft_uart_print_adc_10bit(data_temperature_raw);
-	uart_printstr("\r\n");
 
 	data_humidity_raw = ft_average(data_humidity_average, average);
 	data_temperature_raw = ft_average(data_temperature_average, average);
@@ -220,6 +215,8 @@ void ft_display_data_better() {
 	data_humidity_converted = ((float)data_humidity_raw / 1048576.0) * 100;
 	data_temperature_converted = ((float)data_temperature_raw / 1048576.0) * 200 - 50;
 	
+	
+
 	dtostrf(data_humidity_converted, 1, 1, data_humidity_str);
 	dtostrf(data_temperature_converted, 1, 1, data_temperature_str);
 
@@ -245,7 +242,7 @@ void i2c_read(void) {
 	g_data[5] = i2c_read_ack();
 	g_data[6] = i2c_read_nack();
 
-	ft_display_data();
+	// ft_display_data();
 	ft_display_data_better();
 }
 

@@ -113,7 +113,7 @@ void i2c_start(void) {
 }
 
 void i2c_stop(void) {
-	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
+	TWCR |= (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
 }
 
 
@@ -209,7 +209,7 @@ void ft_protocole(void) {
 	_delay_ms(40);
 
 	i2c_write(0x71);
-	if ((g_state & (1 << 3))) 
+	if (!(g_state & (1 << 3))) 
 	{
 		i2c_write(0xBE);
 		i2c_write(0x08);
