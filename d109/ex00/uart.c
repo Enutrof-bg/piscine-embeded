@@ -73,42 +73,14 @@ char uart_rx(void) {
 	return UDR0;
 }
 
-
 uint8_t ft_hex(uint8_t val) {
 	char hex[] = "0123456789ABCDEF";
 	
 	return hex[val];
 }
 
-void ft_uart_print_hex(uint8_t c) {
+void ft_uart_print_adc(uint8_t c) {
 	uart_tx(ft_hex(c / 16));
 	uart_tx(ft_hex(c % 16));
-}
-
-void ft_uart_print_adc_10bit(uint32_t c) {
-	if (c == 0)
-		uart_tx('0');
-	if (c > 10) {
-		ft_uart_print_adc_10bit(c / 10);
-	}
-	uart_tx('0' + (c % 10));
-}
-
-void ft_uart_print_base(uint32_t c, uint8_t base, uint8_t *byte, uint8_t i) {
-
-	if (c >= base) {
-		ft_uart_print_base(c / base, base, byte, i - 1);
-	}
-	byte[i] = ft_hex(c % 16);
-}
-
-void ft_hexdump_addr(uint32_t c, uint8_t base) {
-	static uint8_t byte[7] = {'0', '0', '0', '0', '0', '0', '0'};
-
-	ft_uart_print_base(c, base, byte, 6);
-
-	for (uint8_t i = 0; i < 7; i++){
-		uart_tx(byte[i]);
-	}
-
+	uart_printstr("\r\n");
 }

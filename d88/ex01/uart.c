@@ -112,3 +112,52 @@ void ft_hexdump_addr(uint32_t c, uint8_t base) {
 	}
 
 }
+
+
+bool ft_compare_login(char *input, char *database) {
+	while (*input != '\0' && *database != '\0') {
+		if (*input != *database) {
+			return false;
+		}
+		input++;
+		database++;
+	}
+
+	return (*input == '\0' && *database == '\0');
+}
+
+void ft_get_input(char *value, int mode) {
+	char input = 0;
+	int index = 0;
+
+	while ((input = uart_rx()) != '\r' && index < BUFFER_SIZE)
+	{
+		//read input
+		if ((input == '\b' || input == 0x7F) && index > 0) {
+			uart_printstr("\b \b");
+
+			value[index] = '\0';
+			if (index > 0) {
+				index--;
+			}
+			continue;
+		} else if (input == '\b' || input == 0x7F) {
+			continue; 
+		}
+		else {
+			if (input >= 'A' && input <= 'Z')
+				input += 32;
+			value[index] = input;
+			index++;
+			value[index] = '\0';
+		}
+
+
+		//write to screen
+		if (mode == MODE_INPUT)
+			uart_tx(input);
+		else
+			uart_tx('*');
+	}
+	uart_printstr("\r\n");
+}

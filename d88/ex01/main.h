@@ -4,8 +4,12 @@
 #include <avr/io.h>
 #include <avr/eeprom.h>
 
+
 #define UART_BAUDRATE 115200
 #define MYUBRR ((F_CPU/(8UL*UART_BAUDRATE))-1)
+
+#define MODE_INPUT 1
+#define BUFFER_SIZE 7
 
 
 //eeprom.c
@@ -25,4 +29,5 @@ void		ft_uart_print_hex(uint8_t c);
 void 		ft_uart_print_adc_10bit(uint32_t c);
 void 		ft_uart_print_base(uint32_t c, uint8_t base, uint8_t *byte, uint8_t i);
 void 		ft_hexdump_addr(uint32_t c, uint8_t base);
+void 		ft_get_input(char *value, int mode);
 #endif
