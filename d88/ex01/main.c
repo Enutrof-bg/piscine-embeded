@@ -1,7 +1,7 @@
 #include "main.h"
 
 uint8_t ft_strlen(char *input) {
-	uint8_t i;
+	uint8_t i = 0;
 
 	while (input[i])
 		i++;
@@ -42,8 +42,10 @@ void ft_get_eeprom() {
 
 	uart_printstr("> ");
 
-	uint16_t address = ft_get_input();
-	uint16_t value = ft_get_input();
+	bool address_valid = true;
+	bool value_valid = true;
+	uint16_t address = ft_get_input(4, &address_valid);
+	uint16_t value = ft_get_input(2, &value_valid);
 	
 	uart_printstr("\r\n");
 
@@ -52,7 +54,7 @@ void ft_get_eeprom() {
 	ft_uart_print_adc_10bit(value);
 	uart_printstr("\r\n");
 
-	isInputValid = ft_check_input(address, value);
+	isInputValid = address_valid && value_valid && ft_check_input(address, value);
 	if (isInputValid) {
 		uart_printstr("GOOD input\r\n");
 		if (ft_replace_eeprom(address, value) == true)

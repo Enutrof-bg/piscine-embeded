@@ -196,20 +196,21 @@ int8_t ft_get_cmd() {
 
 uint32_t ft_get_id() {
 	uint16_t input = 0;
-	uint16_t index = 0;
+	uint8_t digits = 0;
 	uint32_t total = 0;
-	uint16_t input_converted = 0;
+	uint8_t input_converted = 0;
+	const uint32_t max_value = 4294967295UL;
 
 	while (1)
 	{
 		input = uart_rx();
 
 		//read input
-		if ((input == '\b' || input == 0x7F) && index > 0) {
+		if ((input == '\b' || input == 0x7F) && digits > 0) {
 			uart_printstr("\b \b");
 
-			if (index > 0) {
-				index--;
+			if (digits > 0) {
+				digits--;
 				total = total / 10;
 			}
 			continue;
@@ -219,21 +220,21 @@ uint32_t ft_get_id() {
 		}
 		else if (input == '\r' || input == ' ') {
 				uart_tx(' ');
-			if (index > 0)
+			if (digits > 0)
 				break;
 			else
 				continue;
 		}
 		else {
-			if (ft_check_dec(input) == false || index > 4)
+			if (ft_check_dec(input) == false)
 				continue;
 
-			index++;
-
-			input_converted = ft_get_value(input);
-			total = total * 10 + input_converted;
-
-			uart_tx(input);
+			input_converted = (uint8_t)ft_get_value(input);
+			if (digits < 10 && total <= (max_value - input_converted) / 10) {
+				total = total * 10 + input_converted;
+				digits++;
+				uart_tx(input);
+			}
 		}
 	}
 
@@ -242,9 +243,9 @@ uint32_t ft_get_id() {
 
 int16_t ft_get_prio() {
 	uint16_t input = 0;
-	uint16_t index = 0;
-	int16_t total = 0;
-	uint16_t input_converted = 0;
+	uint8_t digits = 0;
+	int32_t total = 0;
+	uint8_t input_converted = 0;
 	int8_t signe = 1;
 
 	while (1)
@@ -252,14 +253,14 @@ int16_t ft_get_prio() {
 		input = uart_rx();
 
 		//read input
-		if ((input == '\b' || input == 0x7F) && index > 0) {
+		if ((input == '\b' || input == 0x7F) && (digits > 0 || signe < 0)) {
 			uart_printstr("\b \b");
 
-			if (index > 0) {
-				index--;
-				if (index == 0)
-					signe = 1;
+			if (digits > 0) {
+				digits--;
 				total = total / 10;
+			} else {
+				signe = 1;
 			}
 			continue;
 		}
@@ -268,35 +269,42 @@ int16_t ft_get_prio() {
 		}
 		else if (input == '\r' || input == ' ') {
 				uart_tx(' ');
-			if (index > 0)
+			if (digits > 0)
 				break;
 			else
 				continue;
 		}
 		else {
-			if (ft_check_dec(input) == false && index > 0)
-				continue;
-			if (ft_check_dec(input) == false && input == '-' && index == 0)
+			if (input == '-' && digits == 0 && signe > 0) {
 				signe = -1;
+				uart_tx(input);
+				continue;
+			}
+			if (ft_check_dec(input) == false)
+				continue;
 
-			index++;
+			input_converted = (uint8_t)ft_get_value(input);
 
-			input_converted = ft_get_value(input);
-			total = total * 10 + input_converted;
-
-			uart_tx(input);
+			int32_t limit;
+			if (signe < 0)
+				limit = 32768;
+			 else
+				limit = 32767;
+			if (total <= (limit - input_converted) / 10) {
+				total = total * 10 + input_converted;
+				digits++;
+				uart_tx(input);
+			}
 		}
 	}
 
-	return total * signe;
+	return (int16_t)(total * signe);
 }
 
 void ft_get_tag(uint8_t* data) {
 
 	uint16_t input = 0;
 	uint16_t index = 0;
-	uint32_t total = 0;
-	uint16_t input_converted = 0;
 
 	while (1)
 	{
@@ -323,7 +331,9 @@ void ft_get_tag(uint8_t* data) {
 				continue;
 		}
 		else {
-			if (ft_check_tag(input) == false || index > 32)
+			if (ft_check_tag(input) == false)
+				continue;
+			if (index >= (TAG_SIZE - 1))
 				continue;
 
 			data[index] = input;

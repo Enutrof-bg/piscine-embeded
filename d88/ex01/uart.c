@@ -186,13 +186,15 @@ uint16_t ft_get_value(char c) {
 		return (c - 'a' + 10);
 	if (c >= 'A' && c <= 'Z')
 		return (c - 'A' + 10);
+	return 0;
 }
 
-uint16_t ft_get_input() {
+uint16_t ft_get_input(uint8_t max_digits, bool *is_valid) {
 	uint16_t input = 0;
 	uint16_t index = 0;
 	uint16_t total = 0;
 	uint16_t input_converted = 0;
+	bool valid = true;
 
 	while (1)
 	{
@@ -202,25 +204,29 @@ uint16_t ft_get_input() {
 		if ((input == '\b' || input == 0x7F) && index > 0) {
 			uart_printstr("\b \b");
 
-			if (index > 0) {
-				index--;
-				total >> 4;
-			}
+			index--;
+			total >>= 4;
 			continue;
 		}
 		else if (input == '\b' || input == 0x7F) {
 			continue; 
 		}
 		else if (input == '\r' || input == ' ') {
-				uart_tx(' ');
+			uart_tx(' ');
 			if (index > 0)
 				break;
-			else
-				continue;
+			valid = false;
+			continue;
 		}
 		else {
-			if (ft_check_hex(input) == false || index > 3)
+			if (ft_check_hex(input) == false) {
+				valid = false;
 				continue;
+			}
+			if (index >= max_digits) {
+				valid = false;
+				continue;
+			}
 
 			index++;
 
@@ -231,5 +237,7 @@ uint16_t ft_get_input() {
 		}
 	}
 
+	if (is_valid != 0)
+		*is_valid = valid;
 	return total;
 }

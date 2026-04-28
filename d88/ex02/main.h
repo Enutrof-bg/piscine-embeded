@@ -3,7 +3,7 @@
 
 #include <avr/io.h>
 #include <avr/eeprom.h>
-
+#include <stdbool.h>
 
 #define UART_BAUDRATE 115200
 #define MYUBRR ((F_CPU/(8UL*UART_BAUDRATE))-1)
@@ -24,11 +24,13 @@
 
 #define MAGIC_NUMBER 0x42
 #define SLOT_SIZE 4
+#define TAG_SIZE 33
+
 typedef struct s_node {
 	uint8_t magic_number; //1
 	uint32_t nodeID; //4
 	int16_t priority; //2
-	uint8_t tag[33]; //33
+	uint8_t tag[TAG_SIZE]; //33
 	uint16_t integrity; //2 // == 42
 } t_node;
 
