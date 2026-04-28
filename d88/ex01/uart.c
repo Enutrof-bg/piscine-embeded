@@ -76,10 +76,6 @@ char uart_rx(void) {
 
 uint8_t ft_hex(uint8_t val) {
 	char hex[] = "0123456789ABCDEF";
-	
-	uart_printstr("test:");
-	uart_tx(hex[val]);
-	uart_printstr("\r\n");
 
 	return hex[val];
 }
@@ -92,7 +88,7 @@ void ft_uart_print_hex(uint8_t c) {
 void ft_uart_print_adc_10bit(uint32_t c) {
 	if (c == 0)
 		uart_tx('0');
-	if (c > 10) {
+	if (c >= 10) {
 		ft_uart_print_adc_10bit(c / 10);
 	}
 	uart_tx('0' + (c % 10));
@@ -130,38 +126,110 @@ bool ft_compare_login(char *input, char *database) {
 	return (*input == '\0' && *database == '\0');
 }
 
-void ft_get_input(char *value, int mode) {
-	char input = 0;
-	int index = 0;
+// void ft_get_input(char *value, int mode) {
+// 	char input = 0;
+// 	int index = 0;
 
-	while ((input = uart_rx()) != '\r' && index < BUFFER_SIZE)
+// 	while ((input = uart_rx()) != '\r' && index < BUFFER_SIZE)
+// 	{
+// 		//read input
+// 		if ((input == '\b' || input == 0x7F) && index > 0) {
+// 			uart_printstr("\b \b");
+
+// 			value[index] = '\0';
+// 			if (index > 0) {
+// 				index--;
+// 			}
+// 			continue;
+// 		} else if (input == '\b' || input == 0x7F) {
+// 			continue; 
+// 		}
+// 		else {
+// 			if (input >= 'A' && input <= 'Z')
+// 				input += 32;
+// 			value[index] = input;
+// 			index++;
+// 			value[index] = '\0';
+// 		}
+
+
+// 		//write to screen
+// 		if (mode == MODE_INPUT)
+// 			uart_tx(input);
+// 		else
+// 			uart_tx('*');
+// 	}
+// 	uart_printstr("\r\n");
+// }
+
+bool ft_find(char c, char *str1) {
+	while (*str1 != '\0') {
+		if (c == *str1) {
+			return (true);
+		}
+		str1++;
+	}
+	return (false);
+}
+
+bool ft_check_hex(char c) {
+	char hex[] = "0123456789abcdefABCDEF";
+	if (ft_find(c, hex) == false)
+		return false;
+	return true;
+}
+
+uint16_t ft_get_value(char c) {
+	if (c >= '0' && c <= '9')
+		return (c - '0');
+	if (c >= 'a' && c <= 'z')
+		return (c - 'a' + 10);
+	if (c >= 'A' && c <= 'Z')
+		return (c - 'A' + 10);
+}
+
+uint16_t ft_get_input() {
+	uint16_t input = 0;
+	uint16_t index = 0;
+	uint16_t total = 0;
+	uint16_t input_converted = 0;
+
+	while (1)
 	{
+		input = uart_rx();
+
 		//read input
 		if ((input == '\b' || input == 0x7F) && index > 0) {
 			uart_printstr("\b \b");
 
-			value[index] = '\0';
 			if (index > 0) {
 				index--;
+				total >> 4;
 			}
 			continue;
-		} else if (input == '\b' || input == 0x7F) {
+		}
+		else if (input == '\b' || input == 0x7F) {
 			continue; 
 		}
-		else {
-			if (input >= 'A' && input <= 'Z')
-				input += 32;
-			value[index] = input;
-			index++;
-			value[index] = '\0';
+		else if (input == '\r' || input == ' ') {
+				uart_tx(' ');
+			if (index > 0)
+				break;
+			else
+				continue;
 		}
+		else {
+			if (ft_check_hex(input) == false || index > 3)
+				continue;
 
+			index++;
 
-		//write to screen
-		if (mode == MODE_INPUT)
+			input_converted = ft_get_value(input);
+			total = (total << 4) | input_converted;
+
 			uart_tx(input);
-		else
-			uart_tx('*');
+		}
 	}
-	uart_printstr("\r\n");
+
+	return total;
 }

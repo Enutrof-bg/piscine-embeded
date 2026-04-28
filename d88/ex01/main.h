@@ -12,10 +12,12 @@
 #define BUFFER_SIZE 6
 
 #define EEPROM_SIZE 1024
+#define EEPROM_LINE 16
+
 
 //eeprom.c
-void ft_print_eeprom();
-
+void ft_print_eeprom(uint16_t address);
+bool ft_replace_eeprom(uint16_t address, uint8_t value);
 
 //timer.c
 void 		setup_timer();
@@ -30,5 +32,6 @@ void		ft_uart_print_hex(uint8_t c);
 void 		ft_uart_print_adc_10bit(uint32_t c);
 void 		ft_uart_print_base(uint32_t c, uint8_t base, uint8_t *byte, uint8_t i);
 void 		ft_hexdump_addr(uint32_t c, uint8_t base);
-void 		ft_get_input(char *value, int mode);
+// void 		ft_get_input(char *value, int mode);
+uint16_t 	ft_get_input();
 #endif

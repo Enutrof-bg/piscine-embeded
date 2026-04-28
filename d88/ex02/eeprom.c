@@ -45,6 +45,13 @@ bool ft_replace_eeprom(uint16_t address, uint8_t value) {
 	return false;
 }
 
+bool ft_verification_eeprom(uint16_t address, uint8_t value) {
+	uint8_t data = EEPROM_read(address);
+	if (data == value)
+		return true;
+	return false;
+}
+
 void ft_print_eeprom(uint16_t address) {
 	uint16_t index = 0;
 	uint8_t eepromData[EEPROM_SIZE];

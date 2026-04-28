@@ -20,11 +20,12 @@ unsigned char EEPROM_read(unsigned int uiAddress)
 }
 
 
-void ft_print_eeprom() {
-	// uint8_t wordByte;
-	uint16_t index = 0;
 
+void ft_print_eeprom() {
+	uint16_t index = 0;
 	uint8_t eepromData[EEPROM_SIZE];
+	uint8_t eepromLine[EEPROM_LINE];
+	uint8_t data;
 
 	// put the address wanted in EEAR and read his contents
 	for (uint16_t index = 0; index < EEPROM_SIZE; index++)  {
@@ -34,15 +35,27 @@ void ft_print_eeprom() {
 
 	for (uint16_t line = 0; line < EEPROM_SIZE; line++)
 	{
-		if ((line % 16 == 0))
+		if ((line % EEPROM_LINE == 0))
 		{
-			ft_hexdump_addr(line, 16);
+			ft_hexdump_addr(line, EEPROM_LINE);
 			uart_printstr(" ");
 		}
 		ft_uart_print_hex(eepromData[line]);
 		uart_printstr(" ");
-		if (line > 0 && ((line+1) % 16 == 0))
+		if (eepromData[line] >= 32 && eepromData[line] <= 126)
+			data = eepromData[line];
+		else
+			data = '.';
+		eepromLine[line % EEPROM_LINE] = data;
+		if (line > 0 && ((line+1) % EEPROM_LINE == 0)) {
+
+			uart_tx('|');
+			for (uint8_t i = 0; i < EEPROM_LINE; i++) {
+				uart_tx(eepromLine[i]);
+			}
+			uart_tx('|');
 			uart_printstr("\r\n");
+		}
 	}
 	
 }
