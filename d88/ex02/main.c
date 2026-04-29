@@ -1,6 +1,6 @@
 #include "main.h"
 
-static volatile uint16_t slot[SLOT_SIZE] = {0, 50, 100, 200};
+static volatile uint16_t slot[SLOT_SIZE] = {0, 64, 128, 192};
 
 uint16_t ft_get_crc16(uint8_t *data, uint16_t size) {
     uint16_t crc = 0xFFFF; // Valeur initiale
@@ -141,7 +141,8 @@ uint8_t ft_reset(t_node *node) {
 	uint8_t data_size = sizeof(t_node);
 	for (uint8_t i = 0; i < SLOT_SIZE; i++) {
 		for (uint8_t addr = 0; addr < data_size; addr++) {
-			EEPROM_write((uint16_t)(slot[i] + addr), 0xFF);
+			// EEPROM_write((uint16_t)(slot[i] + addr), 0xFF);
+			ft_replace_eeprom((uint16_t)(slot[i] + addr), 0xFF);
 		}
 	}
 	node->nodeID = 0;

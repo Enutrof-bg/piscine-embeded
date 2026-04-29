@@ -162,6 +162,8 @@ int8_t ft_get_cmd() {
 	{
 		input = uart_rx();
 		//read input
+		if (input == 27)
+			continue;
 		if (index > CMD_BUFFER)
 			break;
 		else if ((input == '\b' || input == 0x7F) && index > 0) {
@@ -170,13 +172,14 @@ int8_t ft_get_cmd() {
 			buff[index] = '\0';
 			if (index > 0) {
 				index--;
+				buff[index] = '\0';
 			}
 			continue;
 		} else if (input == '\b' || input == 0x7F) {
 			continue; 
 		}
-		else if (input == '\r' || input == ' ') {
-				uart_tx(' ');
+		else if (input == '\r') {
+				// uart_tx(' ');
 			if (index > 0)
 				break;
 			else
@@ -188,11 +191,11 @@ int8_t ft_get_cmd() {
 			buff[index] = input;
 			index++;
 			buff[index] = '\0';
+			uart_tx(input);
 		}
-
-		//write to screen
-		uart_tx(input);
+		
 	}
+	uart_tx(' ');
 	return ft_get_cmd_code(buff);
 }
 
@@ -207,6 +210,8 @@ uint32_t ft_get_id() {
 	{
 		input = uart_rx();
 
+		if (input == 27)
+			continue;
 		//read input
 		if ((input == '\b' || input == 0x7F) && digits > 0) {
 			uart_printstr("\b \b");
@@ -220,8 +225,7 @@ uint32_t ft_get_id() {
 		else if (input == '\b' || input == 0x7F) {
 			continue; 
 		}
-		else if (input == '\r' || input == ' ') {
-				uart_tx(' ');
+		else if (input == '\r') {
 			if (digits > 0)
 				break;
 			else
@@ -255,6 +259,8 @@ int16_t ft_get_prio() {
 		input = uart_rx();
 
 		//read input
+		if (input == 27)
+			continue;
 		if ((input == '\b' || input == 0x7F) && (digits > 0 || signe < 0)) {
 			uart_printstr("\b \b");
 
@@ -269,8 +275,7 @@ int16_t ft_get_prio() {
 		else if (input == '\b' || input == 0x7F) {
 			continue; 
 		}
-		else if (input == '\r' || input == ' ') {
-				uart_tx(' ');
+		else if (input == '\r') {
 			if (digits > 0)
 				break;
 			else
@@ -313,6 +318,8 @@ void ft_get_tag(uint8_t* data) {
 		input = uart_rx();
 
 		//read input
+		if (input == 27)
+			continue;
 		if ((input == '\b' || input == 0x7F) && index > 0) {
 			uart_printstr("\b \b");
 
@@ -325,8 +332,7 @@ void ft_get_tag(uint8_t* data) {
 		else if (input == '\b' || input == 0x7F) {
 			continue; 
 		}
-		else if (input == '\r' || input == ' ') {
-				uart_tx(' ');
+		else if (input == '\r') {
 			if (index > 0)
 				break;
 			else

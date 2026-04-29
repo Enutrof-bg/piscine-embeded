@@ -91,7 +91,7 @@ void ft_print_eeprom(uint16_t address) {
 		uart_printstr(" ");
 
 		//print printable ascii or '.'
-		if (eepromData[line] >= EEPROM_LINE && eepromData[line] <= 126)
+		if (eepromData[line] >= 32 && eepromData[line] <= 126)
 			data = eepromData[line];
 		else
 			data = '.';
