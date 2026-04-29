@@ -2,19 +2,27 @@
 
 void EEPROM_write(uint16_t uiAddress, uint8_t ucData)
 {
-	//DATASHEET PAGE 32 
+	//DATASHEET PAGE 32  // NOTE 2
 	//EEPROM WRITE ENABLE
+	//wait for another writing operation before reading
+	//impossible to read or change EEAR address if a writing operation is in progress
 	while(EECR & (1<<EEPE))
 	{
 	}
 	
-	/* Set up address and Data Registers */
+	// set address register and data register
+	//DATASHEET PAGE 31 SECTION 8.6
 	EEAR = uiAddress;
 	EEDR = ucData;
-	/* Write logical one to EEMPE */
-	EECR |= (1<<EEMPE);
-	/* Start eeprom write by setting EEPE */
-	EECR |= (1<<EEPE);
+	
+	// datasheet page 32 // note3
+	// EEPROM Master Write Enable
+	// set the writing status
+	EECR |= (1 << EEMPE);
+
+	//DATASHEET PAGE 32 SECTION 8.6.3  // NOTE2
+	// start eeprom write
+	EECR |= (1 << EEPE);
 }
 
 uint8_t EEPROM_read(uint16_t uiAddress)

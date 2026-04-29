@@ -10,7 +10,6 @@ void EEPROM_write(uint16_t uiAddress, uint8_t ucData)
 	{
 	}
 	
-
 	// set address register and data register
 	//DATASHEET PAGE 31 SECTION 8.6
 	EEAR = uiAddress;
@@ -19,11 +18,11 @@ void EEPROM_write(uint16_t uiAddress, uint8_t ucData)
 	// datasheet page 32 // note3
 	// EEPROM Master Write Enable
 	// set the writing status
-	EECR |= (1<<EEMPE);
+	EECR |= (1 << EEMPE);
 
-
-
-	EECR |= (1<<EEPE);
+	//DATASHEET PAGE 32 SECTION 8.6.3  // NOTE2
+	// start eeprom write
+	EECR |= (1 << EEPE);
 }
 
 uint8_t EEPROM_read(uint16_t uiAddress)
@@ -126,7 +125,7 @@ void ft_print_eeprom(uint16_t address) {
 	neither possible to read the EEPROM, nor to change the EEAR Register.
 */
 
-
+//note2
 /*
 	• Bit 1 – EEPE: EEPROM Write Enable
 	The EEPROM Write Enable Signal EEPE is the write strobe to the EEPROM. When address and data are

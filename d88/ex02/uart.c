@@ -127,7 +127,7 @@ void ft_uart_print_base(uint32_t c, uint8_t base, uint8_t *byte, uint8_t i) {
 }
 
 void ft_hexdump_addr(uint32_t c, uint8_t base) {
-	static uint8_t byte[7] = {'0', '0', '0', '0', '0', '0', '0'};
+	uint8_t byte[7] = {'0', '0', '0', '0', '0', '0', '0'};
 
 	ft_uart_print_base(c, base, byte, 6);
 

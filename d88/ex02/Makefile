@@ -9,7 +9,9 @@ HEX      = ${NAME}.hex
 
 CC       = avr-gcc
 OBJCOPY  = avr-objcopy
+
 CFLAGS   = -Os -mmcu=${DEVICE} -DF_CPU=${F_CPU}
+# CFLAGS   = -Os -mmcu=${DEVICE} -DF_CPU=${F_CPU} -DDEBUG=1
 
 SRCS = main.c uart.c timer.c eeprom.c utils.c
 
