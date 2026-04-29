@@ -189,12 +189,11 @@ uint16_t ft_get_value(char c) {
 	return 0;
 }
 
-uint16_t ft_get_input(uint8_t max_digits, bool *is_valid) {
+uint16_t ft_get_input(uint8_t digit) {
 	uint16_t input = 0;
 	uint16_t index = 0;
 	uint16_t total = 0;
 	uint16_t input_converted = 0;
-	bool valid = true;
 
 	while (1)
 	{
@@ -215,16 +214,13 @@ uint16_t ft_get_input(uint8_t max_digits, bool *is_valid) {
 			uart_tx(' ');
 			if (index > 0)
 				break;
-			valid = false;
 			continue;
 		}
 		else {
 			if (ft_check_hex(input) == false) {
-				valid = false;
 				continue;
 			}
-			if (index >= max_digits) {
-				valid = false;
+			if (index >= digit) {
 				continue;
 			}
 
@@ -237,7 +233,5 @@ uint16_t ft_get_input(uint8_t max_digits, bool *is_valid) {
 		}
 	}
 
-	if (is_valid != 0)
-		*is_valid = valid;
 	return total;
 }

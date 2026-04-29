@@ -32,6 +32,5 @@ void		ft_uart_print_hex(uint8_t c);
 void 		ft_uart_print_adc_10bit(uint32_t c);
 void 		ft_uart_print_base(uint32_t c, uint8_t base, uint8_t *byte, uint8_t i);
 void 		ft_hexdump_addr(uint32_t c, uint8_t base);
-// void 		ft_get_input(char *value, int mode);
-uint16_t 	ft_get_input(uint8_t max_digits, bool *is_valid);
+uint16_t 	ft_get_input(uint8_t digit);
 #endif

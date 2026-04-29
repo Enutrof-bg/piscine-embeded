@@ -43,7 +43,7 @@ bool ft_check_hex(char c) {
 }
 
 bool ft_check_tag(char c) {
-	char dec[] = "0123456789abcdefABCDEF-_";
+	char dec[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_";
 	if (ft_find(c, dec) == false)
 		return false;
 	return true;

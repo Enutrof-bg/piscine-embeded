@@ -52,7 +52,7 @@ bool ft_verification_eeprom(uint16_t address, uint8_t value) {
 	return false;
 }
 
-void ft_print_eeprom(uint16_t address) {
+void ft_print_eeprom(uint16_t address, uint8_t mode) {
 	uint16_t index = 0;
 	uint8_t eepromData[EEPROM_SIZE];
 	uint8_t eepromLine[EEPROM_LINE];
@@ -75,7 +75,7 @@ void ft_print_eeprom(uint16_t address) {
 		}
 
 		// if the byte address == address arg, print in red
-		if (address == line) {
+		if (address == line && mode == MODE_CHANGE) {
 			uart_printstr("\033[31m");
 			ft_uart_print_hex(eepromData[line]);
 			uart_printstr("\033[0m");

@@ -1,14 +1,17 @@
 #include "main.h"
 
-unsigned char EEPROM_read(unsigned int uiAddress)
+uint8_t EEPROM_read(uint16_t uiAddress)
 {
-	//DATASHEET PAGE 32 
+	//DATASHEET PAGE 32  // NOTE 2
 	//EEPROM WRITE ENABLE
+	//wait for another writing operation before reading
+	//impossible to read or change EEAR address if a writing operation is in progress
 	while(EECR & (1<<EEPE))
 	{
 	}
 
 	// set address register
+	//DATASHEET PAGE 31 SECTION 8.6
 	EEAR = uiAddress;
 
 	//DATASHEET PAGE 32 SECTION 8.6.3  // NOTE1
@@ -73,7 +76,8 @@ void ft_print_eeprom() {
 	neither possible to read the EEPROM, nor to change the EEAR Register.
 */
 
-
+//NOTE 2
+//DATASHEET PAGE 32 SECTION 8.6.3
 /*
 	• Bit 1 – EEPE: EEPROM Write Enable
 	The EEPROM Write Enable Signal EEPE is the write strobe to the EEPROM. When address and data are

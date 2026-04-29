@@ -14,12 +14,17 @@
 #define EEPROM_SIZE 1024
 #define EEPROM_LINE 16
 
+#define MODE_CHANGE 1
+#define MODE_NO_CHANGE 0
+
 #define CMD_STATUS 1
 #define CMD_SET_ID 2
 #define CMD_SET_PRIO 3
 #define CMD_SET_TAG 4
 #define CMD_FACTORY_RESET 5
 #define CMD_NOT_KNOWN 99
+#define CMD_SHOW 9
+
 #define CMD_BUFFER 14
 
 #define MAGIC_NUMBER 0x42
@@ -37,7 +42,7 @@ typedef struct s_node {
 //eeprom.c
 void 		EEPROM_write(uint16_t uiAddress, uint8_t ucData);
 uint8_t 	EEPROM_read(uint16_t uiAddress);
-void 		ft_print_eeprom(uint16_t address);
+void 		ft_print_eeprom(uint16_t address, uint8_t mode);
 bool 		ft_replace_eeprom(uint16_t address, uint8_t value);
 bool 		ft_verification_eeprom(uint16_t address, uint8_t value);
 

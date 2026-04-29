@@ -42,10 +42,8 @@ void ft_get_eeprom() {
 
 	uart_printstr("> ");
 
-	bool address_valid = true;
-	bool value_valid = true;
-	uint16_t address = ft_get_input(4, &address_valid);
-	uint16_t value = ft_get_input(2, &value_valid);
+	uint16_t address = ft_get_input(4);
+	uint16_t value = ft_get_input(2);
 	
 	uart_printstr("\r\n");
 
@@ -54,7 +52,7 @@ void ft_get_eeprom() {
 	ft_uart_print_adc_10bit(value);
 	uart_printstr("\r\n");
 
-	isInputValid = address_valid && value_valid && ft_check_input(address, value);
+	isInputValid = ft_check_input(address, value);
 	if (isInputValid) {
 		uart_printstr("GOOD input\r\n");
 		if (ft_replace_eeprom(address, value) == true)

@@ -2,30 +2,42 @@
 
 void EEPROM_write(uint16_t uiAddress, uint8_t ucData)
 {
-	//DATASHEET PAGE 32 
+	//DATASHEET PAGE 32  // NOTE 2
 	//EEPROM WRITE ENABLE
+	//wait for another writing operation before reading
+	//impossible to read or change EEAR address if a writing operation is in progress
 	while(EECR & (1<<EEPE))
 	{
 	}
 	
-	/* Set up address and Data Registers */
+
+	// set address register and data register
+	//DATASHEET PAGE 31 SECTION 8.6
 	EEAR = uiAddress;
 	EEDR = ucData;
-	/* Write logical one to EEMPE */
+	
+	// datasheet page 32 // note3
+	// EEPROM Master Write Enable
+	// set the writing status
 	EECR |= (1<<EEMPE);
-	/* Start eeprom write by setting EEPE */
+
+
+
 	EECR |= (1<<EEPE);
 }
 
 uint8_t EEPROM_read(uint16_t uiAddress)
 {
-	//DATASHEET PAGE 32 
+	//DATASHEET PAGE 32  // NOTE 2
 	//EEPROM WRITE ENABLE
+	//wait for another writing operation before reading
+	//impossible to read or change EEAR address if a writing operation is in progress
 	while(EECR & (1<<EEPE))
 	{
 	}
 
 	// set address register
+	//DATASHEET PAGE 31 SECTION 8.6
 	EEAR = uiAddress;
 
 	//DATASHEET PAGE 32 SECTION 8.6.3  // NOTE1
@@ -35,6 +47,8 @@ uint8_t EEPROM_read(uint16_t uiAddress)
 	//return value of data register
 	return EEDR;
 }
+
+
 
 bool ft_replace_eeprom(uint16_t address, uint8_t value) {
 	uint8_t data = EEPROM_read(address);
@@ -129,4 +143,13 @@ void ft_print_eeprom(uint16_t address) {
 	the Flash programming is completed before initiating a new EEPROM write. Step 2 is only relevant if the
 	software contains a Boot Loader allowing the CPU to program the Flash. If the Flash is never being updated by
 	the CPU, step 2 can be omitted. See ”Boot Loader Support – 
+*/
+
+//note3
+/*
+	• Bit 2 – EEMPE: EEPROM Master Write Enable
+	The EEMPE bit determines whether setting EEPE to one causes the EEPROM to be written. When EEMPE is
+	set, setting EEPE within four clock cycles will write data to the EEPROM at the selected address If EEMPE is
+	zero, setting EEPE will have no effect. When EEMPE has been written to one by software, hardware clears the
+	bit to zero after four clock cycles. See the description of the EEPE bit for an EEPROM write procedure
 */

@@ -148,6 +148,8 @@ int8_t ft_get_cmd_code(uint8_t *buff) {
 		return CMD_SET_TAG;
 	else if (ft_compare(buff, "FACTORY_RESET"))
 		return CMD_FACTORY_RESET;
+	else if (ft_compare(buff, "SHOW"))
+		return CMD_SHOW;
 	return CMD_NOT_KNOWN;
 }
 
