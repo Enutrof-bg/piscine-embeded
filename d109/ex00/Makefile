@@ -11,7 +11,7 @@ CC       = avr-gcc
 OBJCOPY  = avr-objcopy
 CFLAGS   = -Os -mmcu=${DEVICE} -DF_CPU=${F_CPU}
 
-SRCS = main.c uart.c timer.c rgb.c adc.c
+SRCS = main.c uart.c timer.c rgb.c spi.c utils.c
 
 OBJS = $(SRCS:.c=.o)
 

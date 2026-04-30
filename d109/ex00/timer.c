@@ -1,5 +1,13 @@
 #include "main.h"
 
+__attribute__((signal))
+void TIMER1_COMPA_vect() {
+	// uint8_t c = ft_adc_read();
+	// ft_uart_print_adc(c);
+	// wheel(c);
+	// ft_led(c);
+}
+
 void setup_timer() {
 
 	OCR1A = (F_CPU / 1024UL / 50UL) - 1; //0.02SEC POUR QUE TCNT1 REACH OCR1A

@@ -1,5 +1,16 @@
 #include "main.h"
 
+void ft_init_led() {
+	DDRD |= (1 << DDD3); //blue
+	DDRD |= (1 << DDD5); //red
+	DDRD |= (1 << DDD6); //green
+
+	DDRB |= (1 << PB0);
+	DDRB |= (1 << PB1);
+	DDRB |= (1 << PB2);
+	DDRB |= (1 << PB4);
+
+}
 
 void ft_led(uint8_t c) {
 	PORTB = 0;

@@ -73,14 +73,36 @@ char uart_rx(void) {
 	return UDR0;
 }
 
-uint8_t ft_hex(uint8_t val) {
-	char hex[] = "0123456789ABCDEF";
-	
-	return hex[val];
-}
-
 void ft_uart_print_adc(uint8_t c) {
 	uart_tx(ft_hex(c / 16));
 	uart_tx(ft_hex(c % 16));
 	uart_printstr("\r\n");
+}
+
+void uart_putnbr(int16_t n) {
+    if (n == 0) {
+        uart_tx('0');
+        return;
+    }
+
+    if (n < 0) {
+        uart_tx('-');
+        if (n == -32768) {
+            uart_printstr("32768");
+            return;
+        }
+        n = -n;
+    }
+
+    char buffer[6];
+    int8_t i = 0;
+
+    while (n > 0) {
+        buffer[i++] = (n % 10) + '0';
+        n /= 10;
+    }
+
+    while (--i >= 0) {
+        uart_tx(buffer[i]);
+    }
 }
