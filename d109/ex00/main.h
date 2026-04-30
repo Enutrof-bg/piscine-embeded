@@ -32,6 +32,9 @@ char		uart_rx(void);
 uint8_t		ft_hex(uint8_t val);
 void		ft_uart_print_adc(uint8_t c);
 void		uart_putnbr(int16_t n);
+void		ft_uart_print_base(uint32_t c, uint8_t base, uint8_t *byte, uint8_t i);
+void		ft_hexdump_addr(uint32_t c, uint8_t base);
+
 
 //utils.c
 bool		ft_compare(uint8_t *s1, uint8_t *s2);

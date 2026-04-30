@@ -106,3 +106,22 @@ void uart_putnbr(int16_t n) {
         uart_tx(buffer[i]);
     }
 }
+
+void ft_uart_print_base(uint32_t c, uint8_t base, uint8_t *byte, uint8_t i) {
+
+	if (c >= base) {
+		ft_uart_print_base(c / base, base, byte, i - 1);
+	}
+	byte[i] = ft_hex(c % 16);
+}
+
+void ft_hexdump_addr(uint32_t c, uint8_t base) {
+	uint8_t byte[8] = {'0', '0', '0', '0', '0', '0', '0', '0'};
+
+	ft_uart_print_base(c, base, byte, 7);
+
+	for (uint8_t i = 0; i < 7; i++){
+		uart_tx(byte[i]);
+	}
+	uart_printstr("\r\n");
+}
